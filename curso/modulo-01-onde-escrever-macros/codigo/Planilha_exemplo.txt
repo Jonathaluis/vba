@@ -1,0 +1,20 @@
+' ============================================================
+' COLE ESTE CÓDIGO em: Projeto (VBAProject) > Microsoft Excel Objects >
+' Plan1 (duplo clique na planilha desejada).
+'
+' Aqui moram os EVENTOS DA PLANILHA: macros que só valem para ESTA
+' planilha e disparam sozinhas quando algo acontece nela.
+' ============================================================
+Option Explicit
+
+' Executa quando o usuário MUDA uma célula
+Private Sub Worksheet_Change(ByVal Target As Range)
+    If Not Intersect(Target, Me.Range("A1")) Is Nothing Then
+        MsgBox "Você alterou A1 para: " & Me.Range("A1").Value, vbInformation
+    End If
+End Sub
+
+' Executa quando o usuário SELECIONA outra célula
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    Application.StatusBar = "Selecionado: " & Target.Address(False, False)
+End Sub

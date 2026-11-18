@@ -1,0 +1,25 @@
+' ============================================================
+' COLE ESTE CÓDIGO em: Projeto (VBAProject) > Microsoft Excel Objects >
+' ThisWorkbook (duplo clique).
+'
+' Aqui moram os EVENTOS DA PASTA DE TRABALHO: macros que o Excel
+' executa sozinho quando algo acontece com o arquivo inteiro.
+' ============================================================
+Option Explicit
+
+' Executa ao abrir o arquivo
+Private Sub Workbook_Open()
+    Application.StatusBar = "Bem-vindo! Arquivo aberto em " & Format(Now, "dd/mm/yyyy hh:nn")
+    ThisWorkbook.Worksheets(1).Activate
+End Sub
+
+' Executa antes de salvar
+Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+    ' Exemplo: registrar data/hora do último salvamento na célula Z1 da 1a planilha
+    ThisWorkbook.Worksheets(1).Range("Z1").Value = Now
+End Sub
+
+' Executa antes de fechar
+Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    Application.StatusBar = False
+End Sub

@@ -1,0 +1,23 @@
+' ============================================================
+' BUSCA AO DIGITAR - COLE em: Microsoft Excel Objects > Plan1
+'
+' Preparação: use os dados de teste (A1:C50001) e escolha a
+' célula F1 como "caixa de busca". Ao digitar em F1, a tabela é
+' filtrada na hora pela coluna B (Nome).
+' Requer o módulo mod05_Busca importado (usa FiltrarPorTermo).
+' ============================================================
+Option Explicit
+
+Private Sub Worksheet_Change(ByVal Target As Range)
+    If Intersect(Target, Me.Range("F1")) Is Nothing Then Exit Sub
+
+    On Error GoTo Fim
+    Application.EnableEvents = False
+    Application.ScreenUpdating = False
+
+    FiltrarPorTermo CStr(Me.Range("F1").Value)
+
+Fim:
+    Application.ScreenUpdating = True
+    Application.EnableEvents = True
+End Sub

@@ -1,0 +1,51 @@
+' ============================================================
+' MÓDULO 04 - EVENTOS DA PASTA DE TRABALHO
+' COLE em: Microsoft Excel Objects > ThisWorkbook
+'
+' Eventos da pasta valem para TODAS as planilhas do arquivo.
+' O parâmetro "Sh" diz QUAL planilha disparou o evento.
+' ============================================================
+Option Explicit
+
+Private Sub Workbook_Open()
+    Application.StatusBar = "Pasta aberta em " & Format(Now, "dd/mm/yyyy hh:nn")
+    Me.Worksheets(1).Activate
+End Sub
+
+' Qualquer planilha foi alterada (log simples na planilha "Log", se existir)
+Private Sub Workbook_SheetChange(ByVal Sh As Object, ByVal Target As Range)
+    Dim wsLog As Worksheet, prox As Long
+
+    If Sh.Name = "Log" Then Exit Sub          ' evita log do próprio log
+    On Error Resume Next
+    Set wsLog = Me.Worksheets("Log")
+    On Error GoTo 0
+    If wsLog Is Nothing Then Exit Sub
+
+    Application.EnableEvents = False          ' impede laço infinito
+    prox = wsLog.Cells(wsLog.Rows.Count, 1).End(xlUp).Row + 1
+    wsLog.Cells(prox, 1).Value = Now
+    wsLog.Cells(prox, 2).Value = Sh.Name
+    wsLog.Cells(prox, 3).Value = Target.Address(False, False)
+    Application.EnableEvents = True
+End Sub
+
+' Troca de planilha
+Private Sub Workbook_SheetActivate(ByVal Sh As Object)
+    Application.StatusBar = "Você está em: " & Sh.Name
+End Sub
+
+' Antes de salvar: registra data/hora
+Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
+    Me.Worksheets(1).Range("Z1").Value = Now
+End Sub
+
+' Antes de fechar: limpa a barra de status
+Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    Application.StatusBar = False
+End Sub
+
+' Nova planilha criada
+Private Sub Workbook_NewSheet(ByVal Sh As Object)
+    MsgBox "Nova planilha criada: " & Sh.Name, vbInformation
+End Sub

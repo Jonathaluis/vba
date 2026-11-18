@@ -1,0 +1,64 @@
+' ============================================================
+' MÓDULO 04 - EVENTOS DA PLANILHA
+' COLE em: Microsoft Excel Objects > Plan1 (a planilha de trabalho)
+'
+' Layout sugerido para testar: A = marcação (duplo clique),
+' B = texto (vira MAIÚSCULO), C = número de 0 a 100.
+' ============================================================
+Option Explicit
+
+' ---------- Worksheet_Change ----------
+' Dispara DEPOIS que o usuário altera células.
+' Regra de ouro: desligar EnableEvents, alterar, e SEMPRE religar.
+Private Sub Worksheet_Change(ByVal Target As Range)
+    Dim area As Range, c As Range
+
+    ' 1) Só nos interessa a coluna B, linhas 2 a 1000
+    Set area = Intersect(Target, Me.Range("B2:B1000"))
+    If area Is Nothing Then Exit Sub
+
+    On Error GoTo Fim
+    Application.EnableEvents = False
+
+    For Each c In area.Cells
+        If VarType(c.Value) = vbString Then
+            c.Value = UCase$(Trim$(c.Value))
+        End If
+    Next c
+
+Fim:
+    Application.EnableEvents = True      ' <<< NUNCA esqueça
+End Sub
+
+' ---------- Worksheet_SelectionChange ----------
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+    If Target.Cells.Count = 1 Then
+        Application.StatusBar = "Célula " & Target.Address(False, False) & _
+                                "  |  linha " & Target.Row & ", coluna " & Target.Column
+    End If
+End Sub
+
+' ---------- Worksheet_BeforeDoubleClick ----------
+' Duplo clique na coluna A (a partir da linha 2) liga/desliga um "check".
+Private Sub Worksheet_BeforeDoubleClick(ByVal Target As Range, Cancel As Boolean)
+    If Target.Column <> 1 Or Target.Row < 2 Then Exit Sub
+
+    Cancel = True                         ' cancela o modo de edição da célula
+    Application.EnableEvents = False
+    If Target.Value = ChrW(10004) Then
+        Target.ClearContents
+    Else
+        Target.Value = ChrW(10004)        ' marca de verificação
+        Target.HorizontalAlignment = xlCenter
+    End If
+    Application.EnableEvents = True
+End Sub
+
+' ---------- Worksheet_BeforeRightClick ----------
+' Exemplo: bloquear o botão direito em uma coluna protegida (D).
+Private Sub Worksheet_BeforeRightClick(ByVal Target As Range, Cancel As Boolean)
+    If Target.Column = 4 Then
+        Cancel = True
+        MsgBox "Menu desativado nesta coluna.", vbInformation
+    End If
+End Sub

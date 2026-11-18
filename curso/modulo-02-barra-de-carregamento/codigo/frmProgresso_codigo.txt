@@ -1,0 +1,38 @@
+' ============================================================
+' Técnica 4: barra em USERFORM (a mais profissional)
+'
+' PASSO A PASSO PARA MONTAR O FORMULÁRIO
+' 1) Editor VBA (Alt+F11) > Inserir > UserForm.
+' 2) Na janela Propriedades, mude (Name) para:  frmProgresso
+'    Caption = "Processando..."   Width = 330   Height = 120
+'    StartUpPosition = 1 - CenterOwner
+' 3) Insira 4 Labels, NESTA ORDEM (a ordem define quem fica por cima):
+'
+'    (Name)         Left  Top  Width  Height  Observações
+'    lblMensagem     12    10   300    14     Caption = "Aguarde..."
+'    lblFundo        12    32   300    20     BackColor = cinza claro (&H00E6E6E6&)
+'                                             BorderStyle = 1 - fmBorderStyleSingle
+'    lblBarra        12    32   0      20     BackColor = verde (&H0060AE27&)
+'                                             Caption vazio. Width começa em 0.
+'    lblPercentual   12    58   300    14     Caption = "0%"  TextAlign = 2 - Center
+'
+' 4) Dê duplo clique no formulário e cole o código abaixo.
+' ============================================================
+Option Explicit
+
+' pct entre 0 e 1. Mensagem é opcional.
+Public Sub Atualizar(ByVal pct As Double, Optional ByVal mensagem As String = "")
+    If pct < 0 Then pct = 0
+    If pct > 1 Then pct = 1
+
+    lblBarra.Width = lblFundo.Width * pct
+    lblPercentual.Caption = Format(pct, "0%")
+    If Len(mensagem) > 0 Then lblMensagem.Caption = mensagem
+
+    DoEvents      ' deixa o Excel redesenhar o formulário
+End Sub
+
+' Impede o usuário de fechar no X durante o processo
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+    If CloseMode = vbFormControlMenu Then Cancel = True
+End Sub
